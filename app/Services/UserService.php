@@ -16,22 +16,22 @@ class UserService implements UserServiceInterface
 
     public function get_my_groups(User $user)
     {
-        // TODO: Implement get_my_groups() method.
+        return $this->userRepository->get_my_groups($user);
     }
 
-    public function leave_group(Integer $group_id)
+    public function leave_group(User $user ,int $group_id)
     {
-        // TODO: Implement leave_group() method.
+        return $this->userRepository->leave_group($user, $group_id);
     }
 
     public function upload_file()
     {
-        // TODO: Implement upload_file() method.
+        return $this->userRepository->upload_file();
     }
 
     public function download_file()
     {
-        // TODO: Implement download_file() method.
+        return $this->userRepository->download_file();
     }
 
     public function add_group(User $user, string $name)

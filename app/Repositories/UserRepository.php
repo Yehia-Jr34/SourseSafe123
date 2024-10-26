@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\Group;
+use App\Models\Member;
 use App\Models\User;
 use http\Env\Request;
 use Ramsey\Uuid\Type\Integer;
@@ -13,12 +14,29 @@ class UserRepository implements UserRepositoryInterface
 
     public function get_my_groups(User $user)
     {
+        $groups = [];
 
+        $members = Member::where('user_id', $user->id)->get();
+
+//        return $members;
+
+        foreach ($members as $member) {
+            $group = Group::where('id', $member->group_id)->get();
+            $groups [] = $group;
+        }
+        return $groups;
     }
 
-    public function leave_group(Integer $group_id)
+    public function leave_group(User $user, int $group_id)
     {
-        // TODO: Implement leave_group() method.
+        $member = Member::where('user_id', $user->id)->where('group_id' , $group_id)->first();
+
+        if ($member != null)
+        {
+            $member->delete();
+            return true;
+        }
+        return false;
     }
 
     public function upload_file()
@@ -37,6 +55,12 @@ class UserRepository implements UserRepositoryInterface
             'name' => $name,
             'user_id' => $user->id
         ]);
+
+        Member::create([
+            'group_id' => $group->id,
+            'user_id' => $user->id,
+        ]);
+
         return $group;
     }
 }

@@ -21,6 +21,8 @@ Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'lo
 
 Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::post('group/add_group', [UserController::class, 'add_group']);
+    Route::get('group/my_groups', [UserController::class, 'get_my_groups']);
+    Route::post('group/leave_group', [UserController::class, 'leave_group']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
