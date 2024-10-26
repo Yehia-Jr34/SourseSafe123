@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Interfaces\AuthRepositoryInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function __construct(AuthRepositoryInterface $authRepository)
+    {
+        $this->authReporitory = $authRepository;
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -23,11 +29,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = $this->authReporitory->register($request->name, $request->email, $request->password);
 
         return response()->json(['user' => $user], 201);
     }
@@ -35,13 +37,10 @@ class AuthController extends Controller
     // Login user
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $auth = $this->authReporitory->login($request);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('token_name')->plainTextToken;
-
-            return response()->json(['access_token' => $token, 'token_type' => 'Bearer'], 200);
+        if ($auth != null) {
+            return response()->json(['access_token' => $auth, 'token_type' => 'Bearer'], 200);
         }
 
         return response()->json(['message' => 'Unauthorized'], 401);
@@ -50,7 +49,7 @@ class AuthController extends Controller
     // Logout user
     public function logout(Request $request)
     {
-        Auth::user()->tokens()->delete();
+        $this->authReporitory->logout($request);
         return response()->json(['message' => 'Successfully logged out'], 200);
     }
 }
