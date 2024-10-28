@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Services\UserServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Type\Integer;
 
 class UserController extends Controller
@@ -16,6 +17,14 @@ class UserController extends Controller
 
     public function add_group(Request $request)
     {
+        $validator = Validator::make($request->all() ,[
+            'name' => 'unique:groups'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $user = $request->user();
 
         $group = $this->userService->add_group($user, $request->name);

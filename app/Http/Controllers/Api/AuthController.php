@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Models\User;
+use App\Services\AuthServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,9 +13,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function __construct(AuthRepositoryInterface $authRepository)
+    public function __construct(AuthServiceInterface $authService)
     {
-        $this->authReporitory = $authRepository;
+        $this->authService = $authService;
     }
 
     public function register(Request $request)
@@ -29,7 +30,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $user = $this->authReporitory->register($request->name, $request->email, $request->password);
+        $user = $this->authService->register($request->name, $request->email, $request->password);
 
         return response()->json(['user' => $user], 201);
     }
@@ -37,7 +38,7 @@ class AuthController extends Controller
     // Login user
     public function login(Request $request)
     {
-        $auth = $this->authReporitory->login($request);
+        $auth = $this->authService->login($request);
 
         if ($auth != null) {
             return response()->json(['access_token' => $auth, 'token_type' => 'Bearer'], 200);
@@ -49,7 +50,7 @@ class AuthController extends Controller
     // Logout user
     public function logout(Request $request)
     {
-        $this->authReporitory->logout($request);
+        $this->authService->logout($request);
         return response()->json(['message' => 'Successfully logged out'], 200);
     }
 }

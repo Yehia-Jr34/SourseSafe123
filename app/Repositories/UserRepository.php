@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Member;
 use App\Models\User;
 use http\Env\Request;
+use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Type\Integer;
 
 class UserRepository implements UserRepositoryInterface

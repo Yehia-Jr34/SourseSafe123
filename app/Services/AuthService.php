@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\AuthRepositoryInterface;
+use Illuminate\Http\Request;
 
 class AuthService implements AuthServiceInterface
 {
@@ -12,18 +13,18 @@ class AuthService implements AuthServiceInterface
         $this->authRepository = $authRepository;
     }
 
-    public function register()
+    public function register(string $name, string $email, string $password)
     {
-        return $this->authRepository->register();
+        return $this->authRepository->register($name, $email, $password);
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        return $this->authRepository->login();
+        return $this->authRepository->login($request);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        return $this->authRepository->logout();
+        return $this->authRepository->logout($request);
     }
 }

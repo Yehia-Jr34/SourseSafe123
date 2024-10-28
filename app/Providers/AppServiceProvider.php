@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Interfaces\AdminRepositoriesInterface;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
+use App\Repositories\AdminRepository;
 use App\Repositories\AuthRepository;
 use App\Repositories\UserRepository;
+use App\Services\AdminService;
+use App\Services\AdminServiceInterface;
 use App\Services\AuthService;
 use App\Services\AuthServiceInterface;
 use App\Services\UserService;
@@ -25,7 +29,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuthRepositoryInterface::class,AuthRepository::class);
         $this->app->bind(AuthServiceInterface::class,AuthService::class);
 
-
+        $this->app->bind(AdminRepositoriesInterface::class,AdminRepository::class);
+        $this->app->bind(AdminServiceInterface::class,AdminService::class);
     }
 
     /**
